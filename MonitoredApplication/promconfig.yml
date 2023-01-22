@@ -1,0 +1,10 @@
+﻿global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'monitoredapp_job'
+    scrape_interval: 5s 
+    static_configs:
+      - targets: ['monitoredapplication:80']
+    tls_config:
+      insecure_skip_verify: true  # This is the key
