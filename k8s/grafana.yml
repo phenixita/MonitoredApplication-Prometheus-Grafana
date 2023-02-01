@@ -12,12 +12,14 @@ spec:
         app: grafana
     spec:
       volumes:
-      - name: grafana-pv
+      - name: grafana-storage
+        persistentVolumeClaim:
+          claimName: grafana-pvc
       containers:
       - name: grafana
         image: grafana/grafana
         volumeMounts:
-        - name: grafana-pv
+        - name: grafana-storage
           mountPath: /var/lib/grafana
         ports:
         - containerPort: 3000
@@ -43,16 +45,13 @@ spec:
     port: 3000
     targetPort: 3000
 ---
-# Persistent Volume
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: grafana-pv
+  name: grafana-pvc
 spec:
-  capacity:
-    storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: /mnt/data/grafana
-  persistentVolumeReclaimPolicy: Retain
+  resources:
+    requests:
+      storage: 512Mi
