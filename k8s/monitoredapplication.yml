@@ -1,0 +1,49 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoredapp-deployment
+spec:
+  selector:
+    matchLabels:
+      app: monitoredapp
+  template:
+    metadata:
+      labels:
+        app: monitoredapp
+    spec:
+      containers:
+      - name: monitoredapp
+        image: phenixita/monitoredapplication
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        env: 
+          - name: ASPNETCORE_URLS
+            value: http://+:80
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+---
+# Monitored app service
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoredapplication
+spec:
+  type: LoadBalancer
+  selector:
+    app: monitoredapp
+  ports:
+  - protocol: TCP
+    port: 80
+    name: http
+    targetPort: 80
+  - protocol: TCP
+    port: 443
+    name: https
+    targetPort: 443
